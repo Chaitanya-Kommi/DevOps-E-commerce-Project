@@ -1,0 +1,38 @@
+services:
+
+  catalog-service:
+    image: catalog-service:latest
+    container_name: catalog-service
+    ports:
+      - "5050:5050"
+
+
+  cart-service:
+    image: cart-service:latest
+    container_name: cart-service
+    ports:
+      - "5001:5001"
+    environment:
+      CATALOG_SERVICE: http://catalog-service:5050
+    depends_on:
+      - catalog-service
+
+
+  payment-service:
+    image: payment-service:latest
+    container_name: payment-service
+    ports:
+      - "5002:5002"
+
+
+  order-service:
+    image: order-service:latest
+    container_name: order-service
+    ports:
+      - "5003:5003"
+    environment:
+      CART_SERVICE: http://cart-service:5001
+      PAYMENT_SERVICE: http://payment-service:5002
+    depends_on:
+      - cart-service
+      - payment-service
