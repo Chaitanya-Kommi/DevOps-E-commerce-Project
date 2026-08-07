@@ -1,1 +1,29 @@
+name: Build and Push Microservices Images
 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service: [catalog-service, cart-service, payment-service, order-service]
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Build ${{ matrix.service }} Docker image
+      run: |
+        docker build -t ${{ matrix.service }}:${{ github.sha }} ./${{ matrix.service }}
+
+    - name: Scan ${{ matrix.service }} docker image for vulnerabilities
+      uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        image-ref: ${{ matrix.service }}:${{ github.sha }}
+        severity: CRITICAL
+        exit-code: 1
