@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: order-service-blue
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: order-service
+      version: blue
+
+  template:
+    metadata:
+      labels:
+        app: order-service
+        version: blue
+
+    spec:
+      containers:
+        - name: order-service
+          image: chaitanyakommi/order-service:7492bcb4abd889cea96dcf682dcf9afbe37f79b5
+          ports:
+            - containerPort: 5003

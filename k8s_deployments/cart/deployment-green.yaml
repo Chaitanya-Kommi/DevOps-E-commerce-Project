@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: cart-service-green
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: cart-service
+      version: green
+
+  template:
+    metadata:
+      labels:
+        app: cart-service
+        version: green
+
+    spec:
+      containers:
+        - name: cart-service
+          image: chaitanyakommi/cart-service:7492bcb4abd889cea96dcf682dcf9afbe37f79b5
+          ports:
+            - containerPort: 5001

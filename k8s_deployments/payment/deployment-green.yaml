@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: payment-service-green
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: payment-service
+      version: green
+
+  template:
+    metadata:
+      labels:
+        app: payment-service
+        version: green
+
+    spec:
+      containers:
+        - name: payment-service
+          image: chaitanyakommi/payment-service:7492bcb4abd889cea96dcf682dcf9afbe37f79b5
+          ports:
+            - containerPort: 5002
