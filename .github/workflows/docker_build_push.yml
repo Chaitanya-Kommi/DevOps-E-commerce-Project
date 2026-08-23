@@ -70,7 +70,7 @@ jobs:
             echo "Target colour: ${TARGET_COLOR}"
 
             # Deployment file
-            DEPLOYMENT_FILE="k8s/${SERVICE}/deployment-${TARGET_COLOR}.yaml"
+            DEPLOYMENT_FILE="k8s_deployments/${SERVICE}/deployment-${TARGET_COLOR}.yaml"
 
             # New Docker image
             IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ github.sha }}"
