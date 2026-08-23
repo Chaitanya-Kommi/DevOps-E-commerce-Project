@@ -9,7 +9,7 @@ spec:
 
   selector:
     app: order-service
-    version: blue
+    version: green
 
   ports:
     - protocol: TCP

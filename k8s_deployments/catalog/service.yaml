@@ -9,7 +9,7 @@ spec:
 
   selector:
     app: catalog-service
-    version: blue
+    version: green
 
   ports:
     - protocol: TCP

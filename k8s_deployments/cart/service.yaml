@@ -9,7 +9,7 @@ spec:
 
   selector:
     app: cart-service
-    version: blue
+    version: green
 
   ports:
     - protocol: TCP
