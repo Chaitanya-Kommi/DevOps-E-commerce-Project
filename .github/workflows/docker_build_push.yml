@@ -36,3 +36,59 @@ jobs:
       run: |
         docker tag ${{ matrix.service }}:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.sha }}
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service }}:${{ github.sha }}
+
+update manifests:
+  needs: build-and-push
+  runs-on: ubuntu-latest
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Update Kubernetes manifests with new image tags
+      run: |
+        SERVICES=("catalog" "cart" "payment" "order")
+        for SERVICE in "${SERVICES[@]}"; do
+        SERVICE_FILE="k8s_deployments/${SERVICE}/service.yaml"
+        echo "processing $(SERVICE)"
+        # Read current colour
+        CURRENT_COLOR=$(grep "version:" "$SERVICE_FILE" | awk '{print $2}')
+        echo "Current colour: ${CURRENT_COLOR}"
+        # Determine inactive colour
+            if [ "$CURRENT_COLOR" = "blue" ]; then
+              TARGET_COLOR="green"
+            else
+              TARGET_COLOR="blue"
+            fi
+
+            echo "Target colour: ${TARGET_COLOR}"
+
+            # Deployment file
+            DEPLOYMENT_FILE="k8s/${SERVICE}/deployment-${TARGET_COLOR}.yaml"
+
+            # New Docker image
+            IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/${SERVICE}:${{ github.sha }}"
+
+            # Update image
+            sed -i \
+              "s|image:.*|image: ${IMAGE}|" \
+              "$DEPLOYMENT_FILE"
+
+            # Update service selector
+            sed -i \
+              "s/version: .*/version: ${TARGET_COLOR}/" \
+              "$SERVICE_FILE"
+
+            echo "${SERVICE} updated successfully"
+
+          done
+    - name: show kubernetes changes
+      run: |
+        git diff k8s_deployments/
+
+    - name: Commit and Push changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add k8s_deployments/
+        git commit -m "update Kubernetes manifests to ${GITHUB_SHA} [skip ci]" || echo "No changes to commit"
+        git push origin main
