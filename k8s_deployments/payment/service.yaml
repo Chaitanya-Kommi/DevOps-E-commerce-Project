@@ -9,7 +9,7 @@ spec:
 
   selector:
     app: payment-service
-    version: green
+    version: blue
 
   ports:
     - protocol: TCP

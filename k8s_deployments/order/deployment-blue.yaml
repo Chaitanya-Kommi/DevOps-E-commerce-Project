@@ -21,6 +21,6 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: chaitanyakommi/order-service:7492bcb4abd889cea96dcf682dcf9afbe37f79b5
+          image: chaitanyakommi/order:4b58543772dd42a5af16b2284e80fbe221ace10a
           ports:
             - containerPort: 5003
